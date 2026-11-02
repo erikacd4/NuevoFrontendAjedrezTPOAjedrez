@@ -12,17 +12,33 @@ export default function Menu({ onComenzar, onContinuar }) {
   const despachar = useDispatch();
   const [blanco, setBlanco] = useState('');
   const [negro, setNegro] = useState('');
+  const [validacionIntentada, setValidacionIntentada] = useState(false);
   const [saliendo, setSaliendo] = useState(false);
 
-  function comenzar(evento) {
+function comenzar(evento) {
     evento.preventDefault();
-    despachar(crearPartida({ blanco: blanco.trim(), negro: negro.trim() })).unwrap()
-      .then(() => {
-        setSaliendo(true);
-        setTimeout(onComenzar, 420);
-      })
-      .catch(() => {});
-  }
+
+    // Comprueba que se hayan introducido ambos nombres
+    setValidacionIntentada(true);
+
+    const nombreBlanco = blanco.trim();
+    const nombreNegro = negro.trim();
+
+    // Impide iniciar la partida si falta algún nombre
+    if (!nombreBlanco || !nombreNegro) {
+        return;
+    }
+
+    despachar(crearPartida({
+        blanco: nombreBlanco,
+        negro: nombreNegro
+    })).unwrap()
+        .then(() => {
+            setSaliendo(true);
+            setTimeout(onComenzar, 420);
+        })
+        .catch(() => {});
+}
 
   return (
     <main className={`menu ${saliendo ? 'saliendo' : ''}`}>
@@ -40,8 +56,15 @@ export default function Menu({ onComenzar, onContinuar }) {
               maxLength={40}
               placeholder="Jugador 1"
               autoComplete="off"
-              aria-label="Nombre de quien juega con blancas (opcional)"
+              aria-label="Nombre de quien juega con blancas"
+              aria-invalid={validacionIntentada && !blanco.trim()}
+              aria-describedby={validacionIntentada && !blanco.trim() ? 'error-blancas' : undefined}
             />
+            {validacionIntentada && !blanco.trim() && (
+        <span id="error-blancas" className="mensaje-validacion">
+            Introduce el nombre del jugador de blancas.
+        </span>
+          )}
           </span>
         </label>
         <label className="campo">
@@ -54,8 +77,15 @@ export default function Menu({ onComenzar, onContinuar }) {
               maxLength={40}
               placeholder="Jugador 2"
               autoComplete="off"
-              aria-label="Nombre de quien juega con negras (opcional)"
+              aria-label="Nombre de quien juega con negras"
+              aria-invalid={validacionIntentada && !negro.trim()}
+              aria-describedby={validacionIntentada && !negro.trim() ? 'error-negras' : undefined}
             />
+            {validacionIntentada && !negro.trim() && (
+            <span id="error-negras" className="mensaje-validacion">
+                Introduce el nombre del jugador de negras.
+            </span>
+          )}
           </span>
         </label>
 
