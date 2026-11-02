@@ -1215,3 +1215,18 @@ kbd {
   .resultado-botones { grid-template-columns: 1fr; }
   .modal, .resultado-dialogo { padding: 26px 20px; }
 }
+
+/* Mensajes cuando falta el nombre de un jugador */
+.menu-tarjeta .mensaje-validacion {
+    display: block;
+    margin-top: 6px;
+    color: #f2a6a6;
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: normal;
+}
+
+/* Resalta el campo que necesita corregirse */
+.menu-tarjeta .campo:has(input[aria-invalid="true"]) {
+    border-color: #e58b8b;
+}
